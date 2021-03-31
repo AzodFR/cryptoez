@@ -1,5 +1,5 @@
 module.exports = {
-    name: "lastTweet",
+    name: "lastFrom",
     description: "get lastTweet of account",
     execute(channel, args, twitter){
         console.log("Start search tweet from @" + args[0]);

@@ -1,5 +1,5 @@
 module.exports = {
-    name: "lastSymbol",
+    name: "lastAbout",
     description: "get lastTweet of a symbol",
     execute(channel, args, twitter){
         twitter.get('search/tweets', {q: '$' + args[0], result_type: "recent", count: "1"}, function(error, tweets, response) {

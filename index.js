@@ -105,10 +105,10 @@ client.login(process.env.TOKEN);
 setInterval(function() {
     client.followed.forEach(follow => {
         try{
-            if(client.automate.has("lastTweet"))
+            if(client.automate.has("lastFrom"))
             {
                 var channel = client.parentGuild.channels.cache.get(follow)
-                client.automate.get("lastTweet").execute(client.parentGuild.channels.cache.get(channel.id), [channel.name], twitter);
+                client.automate.get("lastFrom").execute(client.parentGuild.channels.cache.get(channel.id), [channel.name], twitter);
             }
         }catch(error){
             console.error(error);
@@ -116,10 +116,10 @@ setInterval(function() {
     })
     client.symbol.forEach(symbol => {
         try{
-            if(client.automate.has("lastSymbol"))
+            if(client.automate.has("lastAbout"))
             {
                 var channel = client.parentGuild.channels.cache.get(symbol)
-                client.automate.get("lastSymbol").execute(client.parentGuild.channels.cache.get(channel.id), [channel.name], twitter);
+                client.automate.get("lastAbout").execute(client.parentGuild.channels.cache.get(channel.id), [channel.name], twitter);
             }
         }catch(error){
             console.error(error);
