@@ -1,14 +1,28 @@
 const Discord = require('discord.js');
 const fs = require('fs');
 require('dotenv').config();
+var Twitter = require('twitter');
+ 
+var twitter = new Twitter({
+  consumer_key: process.env.C_K,
+  consumer_secret: process.env.C_S,
+  access_token_key: process.env.A_T_K,
+  access_token_secret: process.env.A_T_S
+});
 
 const client = new Discord.Client();
-const {prefix} = require('./config.json')
+const prefix = process.env.PREFIX;
 
 client.commands = new Discord.Collection();
 client.alias = new Discord.Collection();
 const commandFiles = fs.readdirSync('./cmds').filter(file => file.endsWith('.js'));
 
+client.automate = new Discord.Collection();
+const autoCMD = fs.readdirSync('./automate').filter(file => file.endsWith('.js'));
+
+client.followed = new Discord.Collection();
+
+client.parrentGuild = new Discord.Guild();
 
 for(const file of commandFiles){
     const command = require(`./cmds/${file}`);
@@ -21,10 +35,24 @@ for(const file of commandFiles){
     } 
 }
 
+for(const file of autoCMD){
+    const command = require(`./automate/${file}`);
+    client.automate.set(command.name, command);      
+}
+
 
 client.once('ready', () => {
+    console.log("Fetching data...");
+    client.parrentGuild =  client.guilds.cache.get(process.env.GUILD_ID);
+    client.parrentGuild.channels.cache.forEach(chan => {
+        if (chan.parentID === process.env.TWITTER_CAT)
+            {
+            let name = chan.name;
+            client.followed.set(name, chan.id);
+        }
+    })
+    client.user.setActivity(`need help ? => c!help`);
     console.log("Cryptoez is ready !");
-
 })
 
 client.on('message', async message => {
@@ -37,9 +65,9 @@ client.on('message', async message => {
     
     try{
         if(client.commands.has(command)){
-            client.commands.get(command).execute(message, args, client, prefix);
+            client.commands.get(command).execute(message, args, twitter, client, message.guild);
         }else if(client.alias.has(command)){
-            client.alias.get(command).execute(message, args, client, prefix);
+            client.alias.get(command).execute(message, args, twitter, client, message.guild);
         }
         
     }catch(error){
@@ -49,4 +77,36 @@ client.on('message', async message => {
 
 });
 
+client.on('voiceStateUpdate', function(oldState, newState){
+    var channel = oldState.guild.channels.cache.get(oldState.channelID);
+	if (newState.channelID == process.env.VOICE_CREATION_ROOM)
+	{
+		newState.guild.channels.create(`${newState.member.user.username}'s Room`, {
+				type: 'voice',
+				parent: newState.channel.parent,
+				position: 1
+			}).then(chan => {
+					newState.member.voice.setChannel(chan);
+				});
+	}
+    else if (oldState.channelID != process.env.VOICE_CREATION_ROOM && channel.parentID == process.env.PRIVATE_CAT)
+        if (channel.members.size == 0)
+					oldState.channel.delete();
+});
+
 client.login(process.env.TOKEN);
+
+setInterval(function() {
+    client.followed.forEach(follow => {
+        try{
+            if(client.automate.has("lastTweet"))
+            {
+                var channel = client.parrentGuild.channels.cache.get(follow)
+                client.automate.get("lastTweet").execute(client.parrentGuild.channels.cache.get(channel.id), [channel.name], twitter);
+            }
+        }catch(error){
+            console.error(error);
+        }
+    })
+},90000)
+

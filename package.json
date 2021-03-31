@@ -6,7 +6,9 @@
   "dependencies": {
     "discord.js": "^12.5.1",
     "dotenv": "^8.2.0",
-    "fs": "0.0.1-security"
+    "fs": "0.0.1-security",
+    "latest-tweets": "^1.0.4",
+    "twitter": "^1.7.1"
   },
   "devDependencies": {},
   "scripts": {
