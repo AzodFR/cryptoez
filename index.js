@@ -21,8 +21,9 @@ client.automate = new Discord.Collection();
 const autoCMD = fs.readdirSync('./automate').filter(file => file.endsWith('.js'));
 
 client.followed = new Discord.Collection();
+client.symbol = new Discord.Collection();
 
-client.parrentGuild = new Discord.Guild();
+client.parentGuild = new Discord.Guild();
 
 for(const file of commandFiles){
     const command = require(`./cmds/${file}`);
@@ -43,12 +44,17 @@ for(const file of autoCMD){
 
 client.once('ready', () => {
     console.log("Fetching data...");
-    client.parrentGuild =  client.guilds.cache.get(process.env.GUILD_ID);
-    client.parrentGuild.channels.cache.forEach(chan => {
+    client.parentGuild =  client.guilds.cache.get(process.env.GUILD_ID);
+    client.parentGuild.channels.cache.forEach(chan => {
         if (chan.parentID === process.env.TWITTER_CAT)
-            {
+        {
             let name = chan.name;
             client.followed.set(name, chan.id);
+        }
+        if (chan.parentID === process.env.SYMBOL_CAT)
+        {
+            let name = chan.name;
+            client.symbol.set(name, chan.id);
         }
     })
     client.user.setActivity(`need help ? => c!help`);
@@ -101,8 +107,19 @@ setInterval(function() {
         try{
             if(client.automate.has("lastTweet"))
             {
-                var channel = client.parrentGuild.channels.cache.get(follow)
-                client.automate.get("lastTweet").execute(client.parrentGuild.channels.cache.get(channel.id), [channel.name], twitter);
+                var channel = client.parentGuild.channels.cache.get(follow)
+                client.automate.get("lastTweet").execute(client.parentGuild.channels.cache.get(channel.id), [channel.name], twitter);
+            }
+        }catch(error){
+            console.error(error);
+        }
+    })
+    client.symbol.forEach(symbol => {
+        try{
+            if(client.automate.has("lastSymbol"))
+            {
+                var channel = client.parentGuild.channels.cache.get(symbol)
+                client.automate.get("lastSymbol").execute(client.parentGuild.channels.cache.get(channel.id), [channel.name], twitter);
             }
         }catch(error){
             console.error(error);

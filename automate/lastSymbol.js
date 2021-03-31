@@ -1,29 +1,25 @@
 module.exports = {
-    name: "lastTweet",
-    description: "get lastTweet of account",
+    name: "lastSymbol",
+    description: "get lastTweet of a symbol",
     execute(channel, args, twitter){
-        console.log("Start search tweet from @" + args[0]);
-        twitter.get('search/tweets', {q: '', from: `${args[0]}`,result_type: "recent"}, function(error, tweets, response) {
+        twitter.get('search/tweets', {q: '$' + args[0], result_type: "recent", count: "1"}, function(error, tweets, response) {
+            console.log("Start search tweet about $" + args[0]);
             let data = tweets.statuses;
             for (let tweet of data)
             {
                 if (!tweet.text.startsWith("RT"))
                 {
-                    channel.messages.fetch({ limit: 1 }).then(messages => {
+                        channel.messages.fetch({ limit: 20 }).then(messages => {
                         let reply = `https://twitter.com/${tweet.user.screen_name}/status/${tweet.id_str}`;
                         let lastMessage = messages.first();
-                        if (lastMessage != undefined && lastMessage.content.startsWith(reply))
-                        {
-                            return;
-                        }
-                        else
+                        if (lastMessage == undefined || !lastMessage.content.startsWith(reply))
                         {
                             var date = new Date(tweet.created_at);
                             var date_text = ' (' + no_one(date.getDate()) + ' ' + getMonth(date) + ' ' + date.getFullYear() + ' at ' + no_one(date.getHours()) + ':' + no_one(date.getMinutes()) + ')';
                             channel.send(reply + date_text);
+                            return ;
                         }
                     }) 
-                    return;
                 }
             }
          });

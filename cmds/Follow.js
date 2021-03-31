@@ -9,20 +9,47 @@ module.exports = {
         }
         for (let account of args)
         {
-            if (client.followed.has(account))
+            if (!account.startsWith('$'))
             {
-                message.reply(`${account} is already followed`)
+                if (client.followed.has(account))
+                {
+                    message.reply(`${account} is already followed`)
+                }
+                else
+                {
+                    var ch = client.parentGuild.channels.cache.find(ch => ch.name == account)
+                    if (!ch || ch.parentID != process.env.TWITTER_CAT)
+                    {
+                        guild.channels.create(account, {
+                            type: 'text',
+                            parent: guild.channels.cache.get(process.env.TWITTER_CAT),
+                            position: 1
+                        }).then(chan => {
+                            client.followed.set(account, chan.id);
+                        });
+                    }
+                    else
+                        client.followed.set(account, ch.id);
+                    message.reply(`${account} is now followed`);
+                }
             }
             else
             {
-                guild.channels.create(account, {
-                    type: 'text',
-                    parent: guild.channels.cache.get(process.env.TWITTER_CAT),
-                    position: 1
-                }).then(chan => {
-                    message.reply(`${account}'s channel created`);
-                    client.followed.set(account, chan.id);
-                });
+                var symbol = account.substring(1);
+                var ch = client.parentGuild.channels.cache.find(ch => ch.name == symbol)
+                    if (!ch || ch.parentID != process.env.SYMBOL_CAT)
+                    {
+                        guild.channels.create(symbol, {
+                            type: 'text',
+                            parent: guild.channels.cache.get(process.env.SYMBOL_CAT),
+                            position: 1
+                        }).then(chan => {
+                            client.symbol.set(symbol, chan.id);
+                        });
+                    }
+                    else
+                        client.symbol.set(symbol, ch.id);
+                    message.reply(`${account} is now followed`);
             }
         }
     }
