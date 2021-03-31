@@ -3,13 +3,13 @@ module.exports = {
     description: "get lastTweet of account",
     execute(channel, args, twitter){
         twitter.get('search/tweets', {q: '', from: `${args[0]}`,result_type: "recent"}, function(error, tweets, response) {
-            let data = tweets.statuses
+            let data = tweets.statuses;
             for (let tweet of data)
             {
                 if (!tweet.text.startsWith("RT"))
                 {
                     channel.messages.fetch({ limit: 1 }).then(messages => {
-                        let reply = `https://twitter.com/${tweet.user.screen_name}/status/${tweet.id_str}`
+                        let reply = `https://twitter.com/${tweet.user.screen_name}/status/${tweet.id_str}`;
                         let lastMessage = messages.first();
                         if (lastMessage != undefined && lastMessage.content.startsWith(reply))
                         {
@@ -20,7 +20,7 @@ module.exports = {
                         {
                             var date = new Date(tweet.created_at);
                             var date_text = ' (' + no_one(date.getDate()) + ' ' + getMonth(date) + ' ' + date.getFullYear() + ' at ' + no_one(date.getHours()) + ':' + no_one(date.getMinutes()) + ')';
-                            channel.send(reply + date_text)
+                            channel.send(reply + date_text);
                         }
                     }) 
                     return;
