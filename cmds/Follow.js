@@ -17,7 +17,7 @@ module.exports = {
                 }
                 else
                 {
-                    var ch = client.parentGuild.channels.cache.find(ch => ch.name == account)
+                    var ch = client.parentGuild.channels.cache.find(ch => ch.name.startsWith(account))
                     if (!ch || ch.parentID != process.env.TWITTER_CAT)
                     {
                         guild.channels.create(account, {
@@ -29,14 +29,17 @@ module.exports = {
                         });
                     }
                     else
+                    {
+                        ch.setName(account)
                         client.followed.set(account, ch.id);
+                    }
                     message.reply(`${account} is now followed`);
                 }
             }
             else
             {
                 var symbol = account.substring(1);
-                var ch = client.parentGuild.channels.cache.find(ch => ch.name == symbol)
+                var ch = client.parentGuild.channels.cache.find(ch => ch.name.startsWith(symbol))
                     if (!ch || ch.parentID != process.env.SYMBOL_CAT)
                     {
                         guild.channels.create(symbol, {
@@ -48,7 +51,10 @@ module.exports = {
                         });
                     }
                     else
+                    {
+                        ch.setName(symbol)
                         client.symbol.set(symbol, ch.id);
+                    }
                     message.reply(`${account} is now followed`);
             }
         }

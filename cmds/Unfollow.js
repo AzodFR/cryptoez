@@ -26,8 +26,10 @@ module.exports = {
         {
             if (args.length == 2)
                 client.parentGuild.channels.cache.get(collection.get(account)).delete('unfollow');
+            else
+                client.parentGuild.channels.cache.get(collection.get(account)).setName(account + '-unfollowed');
             collection.delete(account);
-            message.reply(`${account} is no longer followed`);
+            message.reply(`${args[0]} is no longer followed`);
         }
     }
 }
