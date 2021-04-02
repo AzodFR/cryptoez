@@ -1,4 +1,3 @@
-const price = require('crypto-price')
 const Discord = require('discord.js')
 const request = require('request')
 
