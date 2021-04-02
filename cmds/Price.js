@@ -30,7 +30,7 @@ module.exports = {
 			}
 			let successembed = new Discord.MessageEmbed()
 			.setTitle(`Actual price for ${args[0]}`)
-			.setDescription(`${list["price"]} ${base}`)
+			.setDescription(`${parseFloat(list["price"]).toFixed(2)} ${base}`)
 			.setTimestamp()
 			.setColor("GREEN")
 			message.channel.send(successembed)
