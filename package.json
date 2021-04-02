@@ -9,6 +9,7 @@
     "dotenv": "^8.2.0",
     "fs": "0.0.1-security",
     "latest-tweets": "^1.0.4",
+    "request": "^2.88.2",
     "twitter": "^1.7.1"
   },
   "scripts": {
