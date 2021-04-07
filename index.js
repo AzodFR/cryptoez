@@ -51,7 +51,7 @@ client.once('ready', () => {
             let name = chan.name;
             client.followed.set(name, chan.id);
         }
-        if (chan.parentID === process.env.SYMBOL_CAT)
+        if (chan.parentID === process.env.SYMBOL_CAT && !chan.name.endsWith("-unfollowed"))
         {
             let name = chan.name;
             client.symbol.set(name, chan.id);
